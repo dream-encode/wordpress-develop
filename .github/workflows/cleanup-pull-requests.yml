@@ -31,7 +31,8 @@ jobs:
       - name: Parse commit message
         id: fixed-tickets
         run: |
-          COMMIT_MESSAGE=$(cat <<'EOF' ${{ github.event.head_commit.message }}
+          COMMIT_MESSAGE=$(cat <<'EOF' | sed -n '/^Fixes #/,/\./p'
+          ${{ github.event.head_commit.message }}
           EOF
           )
           echo "::set-output name=fixed_list::${COMMIT_MESSAGE}"
@@ -45,7 +46,7 @@ jobs:
             let ticketList = false;
             let query = '';
             ticketList = fixesLine.match( /[0-9]+/g );
-            console.log({ticketList, fixesLine});
+            console.log({ticketList, fixesLine, query});
 
             if ( ticketList && ticketList.length > 0 ) {
               query += 'is:pr is:open in:title,body repo:WordPress/wordpress-develop';
