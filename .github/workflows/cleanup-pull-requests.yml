@@ -50,16 +50,14 @@ jobs:
             if ( ticketList && ticketList.length > 0 ) {
               query += 'is:pr is:open in:title,body repo:WordPress/wordpress-develop';
 
-              ticketList.forEach( function buildTracURL( value, index ){
+              ticketList.forEach( ( value, index ) => {
                 if ( 0 !== index ) {
                   query += ' OR';
                 }
 
-                query += ' https://core.trac.wordpress.org/ticket/' + value;
+                query += ` https://core.trac.wordpress.org/ticket/${value}`;
               });
             }
-
-            console.log({query});
 
             return query;
 
@@ -74,7 +72,7 @@ jobs:
             console.log( related_prs.data.items );
             console.log( related_prs );
 
-            related_prs.data.items.forEach(function callback(value, index) {
+            related_prs.data.items.forEach((value, index) => {
               console.log( value );
               console.log( value.number );
             })
