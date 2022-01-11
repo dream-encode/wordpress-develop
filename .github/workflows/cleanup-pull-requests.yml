@@ -51,7 +51,7 @@ jobs:
               query += 'is:pr is:open in:title,body repo:WordPress/wordpress-develop';
 
               ticketList.forEach( function buildTracURL( value, index ){
-                if ( 0 === index ) {
+                if ( 0 !== index ) {
                   query += ' OR';
                 }
 
