@@ -60,8 +60,11 @@ jobs:
 
                 tempQuery += ` https://core.trac.wordpress.org/ticket/${value}`;
 
+                console.log({tempQuery});
+
                 if ( tempQuery.length <= 256 ) {
                   query = tempQuery;
+                  return true;
                 } else {
                   return false;
                 }
