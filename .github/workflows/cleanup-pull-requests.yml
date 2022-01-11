@@ -67,6 +67,7 @@ jobs:
                 }
               });
             }
+            console.log({query});
 
             return query;
 
