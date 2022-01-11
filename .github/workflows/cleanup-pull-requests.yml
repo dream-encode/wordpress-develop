@@ -31,8 +31,7 @@ jobs:
       - name: Parse commit message
         id: fixed-tickets
         run: |
-          COMMIT_MESSAGE=$(cat <<'EOF' | sed -n '/^Fixes #/,/\./p'
-          ${{ github.event.head_commit.message }}
+          COMMIT_MESSAGE=$(cat <<'EOF' ${{ github.event.head_commit.message }}
           EOF
           )
           echo "::set-output name=fixed_list::${COMMIT_MESSAGE}"
