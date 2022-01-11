@@ -1,0 +1,81 @@
+name: Cleanup Pull Requests
+
+on:
+  push:
+    branches:
+      - trunk
+      - '3.[89]'
+      - '[4-9].[0-9]'
+      - test-close-prs
+  schedule:
+    - cron: '0 */12 * * *'
+
+# Cancels all previous workflow runs for pull requests that have not completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name for pull requests
+  # or the commit hash for any other events.
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  # Runs the QUnit tests for WordPress.
+  #
+  # Performs the following steps:
+  # - Checks out the repository.
+  close-prs-push:
+    name: Close pull requests on commit
+    runs-on: ubuntu-latest
+#    if: ${{ github.repository == 'WordPress/wordpress-develop' && github.event_name == 'push' }}
+
+    steps:
+      - name: Parse commit message
+        id: fixed-tickets
+        run: |
+          COMMIT_MESSAGE=$(cat <<'EOF' | sed -n '/^Fixes #/,/\./p'
+          ${{ github.event.head_commit.message }}
+          EOF
+          )
+          echo "::set-output name=fixed_list::${COMMIT_MESSAGE}"
+
+      - name: Create search query
+        id: pr-query
+        uses: actions/github-script@441359b1a30438de65712c2fbca0abe4816fa667 # v5.0.0
+        with:
+          script: |
+            const fixesLine = "${{ steps.fixed-tickets.outputs.fixed_list }}";
+            let ticketList = false;
+            let query = '';
+            ticketList = fixesLine.match( /[0-9]+/g );
+
+            if ( 0 < ticketList.length ) {
+              query += 'is:pr is:open in:title,body repo:WordPress/wordpress-develop';
+
+              ticketList.forEach( function buildTracURL( value, index ){
+                if ( 0 === index ) {
+                  query += ' OR';
+                }
+
+                query += ' https://core.trac.wordpress.org/ticket/' + value;
+              });
+            }
+
+            return query;
+
+      - name: Find pull requests
+        uses: actions/github-script@441359b1a30438de65712c2fbca0abe4816fa667 # v5.0.0
+        with:
+          script: |
+            const related_prs = await github.rest.search.issuesAndPullRequests({
+              q: encodeURIComponent( ${{ steps.pr-query.outputs.result }} ),
+            });
+
+            console.log( related_prs.data.items );
+            console.log( related_prs );
+
+            related_prs.data.items.forEach(function callback(value, index) {
+              console.log( value );
+              console.log( value.number );
+            })
+
+            return related_prs.data;
+
