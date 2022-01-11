@@ -76,11 +76,11 @@ jobs:
               q: ${{ steps.pr-query.outputs.result }},
             });
 
-            console.log( related_prs.data.items );
-            console.log( related_prs );
+            console.log( related_prs.data.items.length );
+            //console.log( related_prs );
 
             related_prs.data.items.forEach((value, index) => {
-              console.log( value );
+              //console.log( value );
               console.log( value.number );
             })
 
