@@ -47,7 +47,7 @@ jobs:
             let query = '';
             ticketList = fixesLine.match( /[0-9]+/g );
 
-            if ( 0 < ticketList.length ) {
+            if ( ticketList && ticketList.length > 0 ) {
               query += 'is:pr is:open in:title,body repo:WordPress/wordpress-develop';
 
               ticketList.forEach( function buildTracURL( value, index ){
