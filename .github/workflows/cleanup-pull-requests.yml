@@ -59,8 +59,6 @@ jobs:
               });
             }
 
-            console.log({query});
-
             return query;
 
       - name: Find pull requests
