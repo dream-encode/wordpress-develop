@@ -49,13 +49,20 @@ jobs:
 
             if ( ticketList && ticketList.length > 0 ) {
               query += 'is:pr is:open in:title,body repo:WordPress/wordpress-develop';
+              let tempQuery = query
 
               ticketList.forEach( ( value, index ) => {
                 if ( 0 !== index ) {
-                  query += ' OR';
+                  tempQuery += ' OR';
                 }
 
-                query += ` https://core.trac.wordpress.org/ticket/${value}`;
+                tempQuery += ` https://core.trac.wordpress.org/ticket/${value}`;
+
+                if ( tempQuery.length <= 256 ) {
+                  query = tempQuery;
+                } else {
+                  break;
+                }
               });
             }
 
