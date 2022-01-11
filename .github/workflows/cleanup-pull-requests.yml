@@ -47,6 +47,8 @@ jobs:
             let query = '';
             ticketList = fixesLine.match( /[0-9]+/g );
 
+            console.log({ticketList});
+
             if ( ticketList && ticketList.length > 0 ) {
               query += 'is:pr is:open in:title,body repo:WordPress/wordpress-develop';
               let tempQuery = query
