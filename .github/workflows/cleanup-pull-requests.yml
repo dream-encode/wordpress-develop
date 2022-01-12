@@ -70,6 +70,7 @@ jobs:
             return query;
 
       - name: Find pull requests
+        id: pr-results
         uses: actions/github-script@441359b1a30438de65712c2fbca0abe4816fa667 # v5.0.0
         with:
           script: |
@@ -77,13 +78,38 @@ jobs:
               q: ${{ steps.pr-query.outputs.result }},
             });
 
-            console.log( related_prs.data.items.length );
-            // console.log( related_prs );
+            return related_prs && related_prs.items;
 
-            related_prs.data.items.forEach((value, index) => {
-              // console.log( value );
-              console.log( value.number );
-            })
+      - name: Get get-svn-id
+        id: git-svn-id
+        run: |
+          COMMIT_MESSAGE=$(cat <<'EOF' | sed -n '$p'
+          ${{ github.event.head_commit.message }}
+          EOF
+          )
+          echo "::set-output name=svn_revision_number::${COMMIT_MESSAGE}"
 
-            return related_prs.data;
+      - name: Close pull requests
+        uses: actions/github-script@441359b1a30438de65712c2fbca0abe4816fa667 # v5.0.0
+        with:
+          script: |
+            console.log(${{ steps.git-svn-id.outputs.svn_revision_number }})
+
+            # const prsToClose = ${{ steps.pr-results.outputs.result }}
+
+            # prsToClose.foReach( ( { owner, repo, number } ) => {
+            #   const comment = await github.rest.issues.createComment( {
+            #     owner,
+            #     repo,
+            #     pull_number: number,
+            #     body: inputs.comment
+            #   } );
+
+            #   const close = await github.rest.pulls.update( {
+            #     owner: pr.owner,
+            #     repo: pr.repo,
+            #     pull_number: pr.number,
+            #     state: 'closed'
+            #   } )
+            # } );
 
