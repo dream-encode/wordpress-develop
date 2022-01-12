@@ -95,7 +95,7 @@ jobs:
           script: |
             const gitSVNIDString = '${{ steps.git-svn-id.outputs.svn_revision_number }}';
 
-            const revisionRegExp = new RegExp( 'trunk@([0-9]+)', 'g' );
+            const revisionRegExp = new RegExp( 'trunk@([0-9]+)' );
             const revisionMatch = gitSVNIDString.match( revisionRegExp );
 
             if ( revisionMatch ) {
