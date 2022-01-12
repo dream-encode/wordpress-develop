@@ -98,9 +98,13 @@ jobs:
             const revisionRegExp = new RegExp( 'trunk@([0-9]+)' );
             const revisionMatch = gitSVNIDString.match( revisionRegExp );
 
-            if ( revisionMatch ) {
-              console.log({revisionMatch})
+            if ( ! revisionMatch || ! revisionMatch[1] ) {
+              return;
             }
+
+            const svnRevision = revisionMatch[1];
+
+            const closeMessage = `Merged into WordPress core in changeset https://core.trac.wordpress.org/changeset/${svnRevision}`;
 
             // const prsToClose = ${{ steps.pr-results.outputs.result }}
 
@@ -109,7 +113,7 @@ jobs:
                 // owner,
                 // repo,
                 // pull_number: number,
-                // body: inputs.comment
+                // body: closeMessage
               // } );
 
               // const close = await github.rest.pulls.update( {
